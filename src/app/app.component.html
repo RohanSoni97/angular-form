@@ -1,50 +1,55 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
-      <form (ngSubmit)="onSubmit(f)" #f="ngForm">
-        <div id="user-data">
+      <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+        <div>
           <div class="form-group">
             <label for="username">UserName</label>
             <input type="text" id="username" 
-            ngModel
             name="username"
+            formControlName="username"
             class="form-control"
-            required
             >
+            <span class="help-block" *ngIf="signUpForm.get('username').errors[ ' nameIsForbidden ' ]"> username is forbidden! </span>
+            <span class="help-block" *ngIf="!signUpForm.get('username').valid && signUpForm.get('username').touched">Please enter a valid username ! </span>
           </div>
           <button class="btn btn-default" type="button">Suggest a username</button>
           <div class="form-group">
             <label for="email">Mail</label>
             <input type="email" id="email" 
-            ngModel
+            formControlName="email"
             name="email"
             class="form-control"
             required
             email
-            #email="ngModel"
             >
-            <span class="help-block" *ngIf="!email.valid && email.touched">Please enter a valid mail !</span>
+            <!-- <span class="help-block">Please enter a valid mail !</span> -->
+            <span class="help-block" *ngIf="!signUpForm.get('email').valid && signUpForm.get('email').touched">Please enter a valid email ! </span>
           </div>
         </div>
-        <div class="form-group">
-          <label for="secret">Secret Questions</label>
-          <select id="secret" class="form-control"
-          [ngModel]="defaultQues"
-            name="secret"
-          >
-            <option value="pet">Your first pet</option>
-            <option value="teacher">Your first teacher</option>
-          </select>
+       
+        <div class="radio" *ngFor="let gender of genders">
+          <label>
+            <input type="radio"
+            formControlName="gender"
+            [value]="gender"
+            >{{gender}}
+          </label>
         </div>
-        <div class="form-control">
-          <textarea rows="3"
-          [(ngModel)]="answers"
+        <div formArrayName="hobbies">
+          <h4>Your Hobbies</h4>
+          <button class="btn btn-default" type="button"
+          (click)="addHobby()"
+          >Add hobbies
+        </button>
+          <div class="form-group"
+          *ngFor="let hobbyControl of signUpForm.get('hobbies').controls; let i=index"
           >
-
-          </textarea>
+          <input type="text" class="form-control" [formControlName]="i">
+          </div>
         </div>
+        <span class="help-block" *ngIf="!signUpForm.valid && signUpForm.touched">Please enter a valid data ! </span>
         <button class="btn btn-primary" type="submit"
-        [disabled]="!f.valid"
         >Submit</button>
       </form>
 
